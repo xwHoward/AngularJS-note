@@ -36,7 +36,6 @@
 - 每一个Angular应用只有一根\$scope对象(一般位于ng-app上)
 - \$scope可以传播事件，类似DOM事件，可以向上也可以向下
 - \$scope不仅是MVC的基础，也是后面实现双向数据绑定的基础
-- angular.element(\$0).scope()调试scope
 
 ----------
 
@@ -51,7 +50,11 @@
 
 
 ----------
-###MVC: AngularJS的 MVC 是借助于 $scope 实现的
+###MVC: AngularJS的 MVC 是借助于 $scope 实现的\[1]
+
+
+----------
+
 
 ###模块化：划分module
 ```
@@ -60,13 +63,17 @@ var myModule2 = angular.module("MyModule2", []);
 ...
 ```
 ####什么是Module
-- ⼤大部分应⽤用都有⼀一个主⽅方法(main)⽤用来实例化、组织、启动应⽤用。
+- ⼤大部分应⽤用都有⼀一个主方法(main)⽤用来实例化、组织、启动应⽤用。
 - AngularJS应⽤用没有主⽅方法，⽽而是使⽤用模块来声明应⽤用应该如何启动。
 - 模块允许通过声明的⽅方式来描述应⽤用中的依赖关系，以及如何进⾏行组装和启动
 - 模块是组织业务的一个框框，在一个模块当中定义多个服务。当引入了一个模块的时候，就可以使⽤用这个模块提供的一种或多种服务了。
 - AngularJS 本⾝身的⼀一个默认模块叫做ng ，它提供了\$http ，\$scope等等服务
 - 服务只是模块提供的多种机制中的⼀一种，其它的还有指令（directive ），过滤器（ filter ），及其它配置信息。
 - 模块可以以任何先后或者并⾏行的顺序加载（因为模块的执⾏行本⾝身是延迟的）。
+
+
+----------
+
 
 ###依赖注入：
 ```
@@ -80,9 +87,13 @@ MyModule依赖于MyModule1,MyModule2...
 
 *Angular的依赖注⼊只是简单的获取它所需要的东⻄，⽽不需要创建那些他们所依赖的东⻄*
 
+
+----------
+
+
 ##$provide
 
-- angular 是用\$provide对象来实现自动依赖注入机制，注入机制通过调用一个 provider的\$get()方法，把返回的对象作为被注入函数的参数进行相关调用
+- angular 是用\$provide对象来实现自动依赖注入机制，注入机制通过调用一个 provider的\$get()方法，**把返回的对象作为被注入函数的参数进行相关调用**
 
     ```
     var myApp = angular.module('myApp',[],function($provide){
@@ -96,20 +107,20 @@ MyModule依赖于MyModule1,MyModule2...
         });
     });
     
-    myApp.controller('firstController',function(CustomService,$scope,CustomService){//注入CustomService
+    myApp.controller('firstController',function(CustomService,$scope){//注入CustomService
     $scope.name = '张三';
     console.log(CustomService);// {message:'CustomService Message'
 });
     ```
     
-- \$provider.provider 是一种定义服务的方法, $provider还提供了很多很简便的方法,这些简便的方法还直接被module所引用
+- \$provide.provider 是一种**定义服务**的方法, $provide还提供了很多很简便的方法,这些简便的方法还直接被module所引用
 
 
-###\$provider.factory
+###\$provide.factory
 - factory 方法直接把一个函数当成是一个对象的 $get() 方法
 - 返回的内容可以是**任何类型**
 
-###\$provider.service
+###\$provide.service
 - 和factory类似，但返回的东西**必须是对象**
 ```
 //自定义工厂
@@ -119,10 +130,10 @@ $provide.factory('CustomFactory',function(){
 
 // 自定义服务
 $provide.service('CustomService2',function(){
-    return {};
+    return {...};
 })
 ```
-*\*也可以在module内直接调用factory和service*
+*\*也可以在module内直接调用factory和service:*
 ```
 myApp.factory('CustomFactory',function(){
     return [1,2,3,4,5,6,7];
@@ -131,6 +142,10 @@ myApp.service('CustomService2',function(){
     return {};
 });
 ```
+
+
+----------
+
 
 ###双向绑定
 在修改输入域的值时， AngularJS 属性的值也将修改：
@@ -151,13 +166,12 @@ myApp.service('CustomService2',function(){
 监听对象（watcher），也就是说⼀个对象绑定了N个属
 性，就会添加N个watcher。
 
-- angular 所系统的⽅法中都会触发⽐较事件，⽐如：
+- 自动触发脏检查：angular 所系统的⽅法中都会触发脏检查，⽐如：
 controller 初始化的时候，所有以ng-开头的事件执⾏后，都会触发脏检查
 - ⼿动触发脏检查
-    - \$apply仅仅只是进⼊angular context ,然后通过\$digest去
-触发脏检查 
+    - \$apply()方法（仅仅只是进⼊angular context ,然后通过\$digest去触发脏检查 ）
     - \$digest()所属的scope和其所有⼦scope的脏检查，脏检查⼜会触发\$watch()，整个Angular双向绑定机制就活了起来
-    - \$watch
+    - \$watch()方法
         - 在digest执⾏时，如果watch观察的value与上次执⾏时不⼀
     样时，就会被触发
         - AngularJS内部的watch实现了⻚⾯随model的及时更新
@@ -167,7 +181,7 @@ controller 初始化的时候，所有以ng-开头的事件执⾏后，都会触
             deepWacth:可选的布尔值命令检查被监控的Object（如果被watch的目标是Object时）的每个属性是否发⽣变化
 
 ----------
-##AngularJS中的$scope
+##\[1]AngularJS中的$scope
 ###AngularJS 应用组成如下：
 - View(视图), 即 HTML。
 - Model(模型), 当前视图中可用的数据。
@@ -184,7 +198,50 @@ controller 初始化的时候，所有以ng-开头的事件执⾏后，都会触
 
 
 ----------
+##过滤器filter
 
+- 是用于对数据的格式化，或者筛选的函数,可以直接在模板中通过一种语法使用
+    - {{ expression | filter }}
+    - {{ expression | filter1:param,….}}
+- 过滤器种类
+    - number
+    - currency
+    - date
+    - limitTo
+    - lowercase
+    - uppercase
+    - filter 
+    - json
+    - orderBy
+- 自定义过滤器
+通过$filterProvider.register()注册
+```
+$filterProvider.register('filterName',filterFactory(){
+    return function(param){//这里返回的函数才是真正的filterName对应的filter函数
+    //param是过滤器的过滤对象
+        ...
+        return 过滤结果;
+    }
+})
+//模板中的调用方式：
+<ul>
+    <li ng-repeat="user in data | filterName">//这里filterName的过滤对象是data
+        {{user.name}}
+        {{user.age}}
+        {{user.city}}
+    </li>
+</ul>
+```
+通过模块的filter方法
+```
+module.filter(filterName, filterFactory(){
+    return function(param){
+        ...
+    }
+})
+```
+
+*（推荐的写法，函数的返回和嵌套关系简单）*
 
 
 ----------
@@ -264,37 +321,357 @@ $routeProvider.when(url, {
 ----------
 
 
-##ui-router的使用
-与ngRoute的区别是：
-1. 可实现路由分开控制多模块页面的各个模块
+#ui-router
+##ui-router与ngRoute的区别：
+1. uR可实现路由分开控制**多模块页面**的各个模块，ui-router支持**嵌套**的层级，可以实现对多个视图的控制，核心原理是state的嵌套和层级关系
 2. html中的视图部分为`<div ui-view></div>`
 3. 需要依赖ui.router，函数需要引入\$stateProvider及\$urlRouterProvider:
-```
-var myUIRoute = angular.module('MyUIRoute', ['ui.router', 'ngAnimate']);
-myUIRoute.config(function($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider.otherwise("/state1");
-    $stateProvider
-        .state('state1', {
-            url: "/state1",
-            templateUrl: "tpls/state1.html"
+    ```
+    var myUIRoute = angular.module('MyUIRoute', ['ui.router']);
+    myUIRoute.config(function($stateProvider, $urlRouterProvider) {
+    ...
+    }
+    ```
+    
+4. 语法的差别：（state需要一个name，并且url是在配置项里设定）
+    ```
+    $stateProvider.state('contact.detail', {
+        url: '/contacts/:id',
+        template: '<h1>Hello</h1>',
+        templateUrl: 'contacts.html',
+        controller: function($scope){ ... },
+        resolve: { ... }
+    }) 
+    $routeProvider.when('/contacts/:id', {
+        template: '<h1>Hello</h1>',
+        templateUrl: 'contacts.html',
+        controller: function($scope){ ... },
+        resolve: { ... }
+    }) 
+    ```
+##state
+1. 定义方式
+    ```
+    $stateProvider.state('contacts', {
+      template: '<h1>My Contacts</h1>'
+    })
+    ```
+    
+2. 激活state
+uR以state来作为路由标记，激活某个state的方式有：
+
+- $state.go()
+- Click a link with ui-sref directive
+- Navigate to the state's url(if provided)
+
+    > 一个state被激活后，他的模板会被自动插入到父state的模板的ui-view中。如果这个state已经是顶层state，那么父模板就是index.html.
+    
+3. 模板template/templateUrl
+templateUrl 也可以是一个返回url的函数， It takes one preset parameter, stateParams, which is not injected.
+    ```
+    $stateProvider.state('contacts', {
+      templateUrl: function ($stateParams){
+        return '/partials/contacts.' + $stateParams.filterBy + '.html';
+      }
+    })
+    ```
+*\*或者还可以使用templateProvider来返回html模板*
+4. 控制器
+
+    ```
+        $stateProvider.state('contacts', {
+          template: '<h1>{{title}}</h1>',
+          controller: function($scope){
+            $scope.title = 'My Contacts';
+          }
         })
-        .state('state1.list', {
-            url: "/list",
-            templateUrl: "tpls/state1.list.html",
-            controller: function($scope) {
-                ...
+    ```
+
+    > Controllers are instantiated on an as-needed basis, when their corresponding scopes are created, i.e. when the user manually navigates to a state via a URL, $stateProvider will load the correct template into the view, then bind the controller to the template's scope.
+    > 总结：在state中定义的controller会在改state模板被应用于视图时才被实例化。
+
+5. resolve
+    > resolve is an optional **map object** of dependencies which should be injected into the controller.
+    > resolve指定当前controller所依赖的其他模块。
+
+    Example:
+    ```
+    $stateProvider.state('myState', {
+          resolve:{
+             // Example using function with simple return value.
+             // Since it's not a promise, it resolves immediately.
+             simpleObj:  function(){
+                return {value: 'simple!'};
+             },
+    
+             // Example using function with returned promise.
+             // This is the typical use case of resolve.
+             // You need to inject any services that you are
+             // using, e.g. $http in this example
+             promiseObj:  function($http){
+                // $http returns a promise for the url data
+                return $http({method: 'GET', url: '/someUrl'});
+             },
+    
+             // Another promise example. If you need to do some 
+             // processing of the result, use .then, and your 
+             // promise is chained in for free. This is another
+             // typical use case of resolve.
+             promiseObj2:  function($http){
+                return $http({method: 'GET', url: '/someUrl'})
+                   .then (function (data) {
+                       return doSomeStuffFirst(data);
+                   });
+             },        
+    
+             // Example using a service by name as string.
+             // This would look for a 'translations' service
+             // within the module and return it.
+             // Note: The service could return a promise and
+             // it would work just like the example above
+             translations: "translations",
+    
+             // Example showing injection of service into
+             // resolve function. Service then returns a
+             // promise. Tip: Inject $stateParams to get
+             // access to url parameters.
+             translations2: function(translations, $stateParams){
+                 // Assume that getLang is a service method
+                 // that uses $http to fetch some translations.
+                 // Also assume our url was "/:lang/home".
+                 return translations.getLang($stateParams.lang);
+             },
+    
+             // Example showing returning of custom made promise
+             greeting: function($q, $timeout){
+                 var deferred = $q.defer();
+                 $timeout(function() {
+                     deferred.resolve('Hello!');
+                 }, 1000);
+                 return deferred.promise;
+             }
+          },
+    
+          // The controller waits for every one of the above items to be
+          // completely resolved before instantiation. For example, the
+          // controller will not instantiate until promiseObj's promise has 
+          // been resolved. Then those objects are injected into the controller
+          // and available for use.  
+          controller: function($scope, simpleObj, promiseObj, promiseObj2, translations, translations2, greeting){
+              $scope.simple = simpleObj.value;
+    
+              // You can be sure that promiseObj is ready to use!
+              $scope.items = promiseObj.data.items;
+              $scope.items = promiseObj2.items;
+    
+              $scope.title = translations.getLang("english").title;
+              $scope.title = translations2.title;
+    
+              $scope.greeting = greeting;
+          }
+       })
+    ```
+    
+6. 为特定的state附加一些数据：
+    ```
+    $stateProvider
+      .state('contacts', {
+        templateUrl: 'contacts.html',
+        data: {
+            customData1: 5,
+            customData2: "blue"
+        }
+      })
+      //With the above example states you could access the data like this:
+    function Ctrl($state){
+        console.log($state.current.data.customData1) // outputs 5;
+        console.log($state.current.data.customData2) // outputs "blue";
+    }
+    ```
+7. 嵌套的state和view
+    - 嵌套state的方法：
+        - .state('contacts.list', {})
+        - 添加属性`parent: 'contacts'(string)/contacts(state Object[2])`
+    - state从父state继承的东西：
+        - Resolved dependencies via resolve
+            - 子state中的controller和resolve都可以通过注入父state中已经resolve的依赖来继承并使用父state提供的依赖
+            ```
+            $stateProvider.state('parent', {
+              resolve:{
+                 resA:  function(){
+                    return {'value': 'A'};
+                 }
+              },
+              controller: function($scope, resA){
+                  $scope.resA = resA.value;
+              }
+           })
+           .state('parent.child', {
+              resolve:{
+                 resB: function(resA){
+                    return {'value': resA.value + 'B'};
+                 }
+              },
+              controller: function($scope, resA, resB){
+                  $scope.resA2 = resA.value;
+                  $scope.resB = resB.value;
+              }
+            ```
+            
+        - Custom data properties（也就是父state的data域）
+            ```
+            $stateProvider.state('parent', {
+                  data:{
+                     customData1:  "Hello",
+                     customData2:  "World!"
+                  }
+               })
+               .state('parent.child', {
+                  data:{
+                     // customData1 inherited from 'parent'
+                     // but we'll overwrite customData2
+                     customData2:  "UI-Router!"
+                  }
+               });
+            ```
+            
+        - **Nothing else is inherited (no controllers, templates, url, etc).** 特别地，url会被默认地继承，子state基于此来构建自己的url.
+        - \$scope仅在view和state都处于相同嵌套关系时会继承相关属性[3]
+    - 抽象state
+        - To prepend url to child state urls
+        ```
+        $stateProvider
+        .state('contacts', {
+            abstract: true,
+            url: '/contacts',
+    
+            // Note: abstract still needs a ui-view for its children to populate.
+            // You can simply add it inline here.
+            template: '<ui-view/>'
+        })
+        .state('contacts.list', {
+            // url will become '/contacts/list'
+            url: '/list'
+            //...more
+        })
+        .state('contacts.detail', {
+            // url will become '/contacts/detail'
+            url: '/detail',
+            //...more
+        })
+        ```
+        - To insert a template with its own ui-view for child states to populate
+        ```
+        $stateProvider
+            .state('contacts', {
+                abstract: true,
+                templateUrl: 'contacts.html'
+            })
+            .state('contacts.list', {
+                // loaded into ui-view of parent's template
+                templateUrl: 'contacts.list.html'
+            })
+            .state('contacts.detail', {
+                // loaded into ui-view of parent's template
+                templateUrl: 'contacts.detail.html'
+            })
+            
+        <!-- contacts.html -->
+        <h1>Contacts Page</h1>
+        <div ui-view></div>
+        ```
+        - *To provide resolved dependencies via resolve for use by child states.
+        - *To provide inherited custom data via data for use by child states or an event listener.
+        - *To run an onEnter or onExit function that may modify the application in someway.
+        - Any combination of the above.
+    
+8. 多视图的定位与路由
+    - 使用views对象来配置路由
+    - 视图名称的相对定位与绝对定位
+    - 视图的绝对定位的标志是视图名称中的@标号，视图的绝对定位可以在任意视图中进行，最顶层的模板（index.html）为unnamed，其值为空。
+9. url路由
+    ```
+    $stateProvider
+        .state('contacts.detail', {
+            url: "/contacts/:contactId",
+            templateUrl: 'contacts.detail.html',
+            controller: function ($stateParams) {
+                // If we got here from a url of /contacts/42
+                expect($stateParams).toBe({contactId: "42"});
             }
         })
-        .state('state2', {
-            ...
+    ```
+    - Basic Parameters
+        `url: '/contacts/:contactId'`
+        `url: '/contacts/{contactId}'`
+        在链接中传递参数：`<a ui-sref="contacts.detail({contactId: value})">View Contact</a>`
+    - Regex
+        `url: '/contacts/{contactId:[0-9a-fA-F]{1,8}}'//Hexadecimals`
+        *\*正则表达式路由参数不能是选择和贪婪的*
+    - Query
+        `url: "/contacts?myParam"
+        // will match to url of "/contacts?myParam=value"`
+    - \$stateParams
+    
+        ```
+        // If you had a url on your state of:
+        url: '/users/:id/details/{type}/{repeat:[0-9]+}?from&to'
+        // Then you navigated your browser to:
+        '/users/123/details//0'
+        // Your $stateParams object would be 
+        { id:'123', type:'', repeat:'0' }
+        
+        // Then you navigated your browser to:
+        '/users/123/details/default/0?from=there&to=here'
+        // Your $stateParams object would be
+        { id:'123', type:'default', repeat:'0', from:'there', to:'here' }
+        ```
+        *`$stateParams`只包含本state的参数信息，不会继承*
+        但是可以在resolve里间接引入（利用了resolve的继承机制）：
+        
+        ```
+        $stateProvider.state('contacts.detail', {
+           url: '/contacts/:contactId',   
+           controller: function($stateParams){
+              $stateParams.contactId  //*** Exists! ***//
+           },
+           resolve:{
+              contactId: ['$stateParams', function($stateParams){
+                  return $stateParams.contactId;
+              }]
+           }
+        }).state('contacts.detail.subitem', {
+           url: '/item/:itemId', 
+           controller: function($stateParams, contactId){
+              contactId //*** Exists! ***//
+              $stateParams.itemId //*** Exists! ***//  
+           }
         })
-        .state('state2.list', {
-            ...
-        });
-});
+        ```
+        
+    - \$urlRouterProvider
+        \$urlRouterProvider是\$locaction的监视器，$location变化时他就会根据规则做出相应的重定向
+        
+        
+        
+        
+        
+        
+        
+6.ui-sref的用法：
 ```
+//1.直接指向state
+<a ui-sref="state1">state1</a>
+//编译以后--> <a ui-sref="state1" href="#/state1">state1</a>
 
+//2.带参数的用法：
+<li ng-repeat="contact in contacts">
+   <a ui-sref="contacts.detail({ id: contact.id })"</a>
+</li>
 
+//3.使用相对路径：
+ <a ui-sref='^'>Home</a>//根据该链接所在的state来进行相对定位
+```
 ----------
 
 
@@ -319,9 +696,6 @@ app.directive("runoobDirective", function() {
     };
 });
 ```
-
-
-
 
 
 ```
