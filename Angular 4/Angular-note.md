@@ -167,7 +167,7 @@ export class Hero {
 
 ### 2.2 模板语法
 
-在 Angular 中，组件扮演着Model-View-Controller里的控制器(C)或Model-View-ViewModel里的视图模型(VM)的角色，模板则扮演视图(V)的角色。
+在 Angular 中，组件扮演着Model-View-Controller里的控制器(C)或Model-View-ViewModel里的视图模型(VM)的角色，模板则扮演视图(V)的角色。
 
 #### 2.2.1 模板表达式
 
@@ -206,7 +206,7 @@ JavaScript 中那些具有或可能引发副作用的表达式是被禁止的，
 
 和模板表达式一样，模板语句使用的语言也像 JavaScript。 模板语句解析器和模板表达式解析器有所不同，特别之处在于它支持基本赋值 (=) 和表达式链 (;和,)。
 
-典型的语句上下文就是当前组件的实例。模板语句上下文还可以引用模板自身上下文中的属性。 在下面的例子中，就把模板的$event对象、模板输入变量 (let hero)和模板引用变量 (#heroForm)传给了组件中的一个事件处理器方法。
+典型的语句上下文就是当前组件的实例。模板语句上下文还可以引用模板自身上下文中的属性。 在下面的例子中，就把模板的`$event`对象、模板输入变量`(let hero)`和模板引用变量`(#heroForm)`传给了组件中的一个事件处理器方法。
 
 ```html
 <button (click)="onSave($event)">Save</button>
@@ -219,3 +219,38 @@ JavaScript 中那些具有或可能引发副作用的表达式是被禁止的，
 #### 2.2.3 数据绑定
 
 绑定的类型可以根据数据流的方向分成三类： 从数据源到视图、从视图到数据源以及双向的从视图到数据源再到视图。
+
+| 数据方向        | 语法           | 绑定类型  |
+| ------------- |-------------| -----|
+| 数据源到视图目标      | {{expression}} / [target]="expression" / bind-target="expression" | 插值表达式 / Property / Attribute / 类 / 样式 |
+| 视图目标到数据源      | (target)="statement" / on-target="statement"      |   事件 |
+| 双向 | [(target)]="expression" / bindon-target="expression"      |    双向 |
+
+除了插值表达式之外的绑定类型，在等号左边是目标名， 无论是包在括号中 ([]、()) 还是用前缀形式 (bind-、on-、bindon-) 。
+
+这个目标名就是属性（Property）的名字。它可能看起来像是元素属性（Attribute）的名字，但它不是。在angular中只有极少数情况会用到html元素的attribute，避免混淆完全可以忽略attribute这个概念，只关注Property，他是组件、指令和元素的数据属性。
+
+我们日常会使用到attribute的场景，angular提供了三个方便的绑定方式，attribute、class 和 style 绑定。
+
+他们分别对应`[attr.attr-name]`、`[class.class-name]`和`[style.style-property]`。
+
+```html
+<td [attr.colspan]="1 + 1">One-Two</td>
+<div [class.special]="isSpecial">The class binding is special</div>
+<button [style.background-color]="canSave ? 'cyan': 'grey'" >Save</button>
+<button [style.font-size.%]="!isSpecial ? 150 : 50" >Small</button>
+```
+
+> 注意，样式属性命名方法可以用中线命名法，像上面的一样 也可以用驼峰式命名法，如fontSize。
+
+#### 2.2.4 事件绑定
+
+语法：
+
+```html
+<button (click)="onSave()">Save</button>
+<!-- 有些人更喜欢带on-前缀的备选形式，称之为规范形式 -->
+<button on-click="onSave()">On Save</button>
+```
+
+模板语法-内置属性型指令
